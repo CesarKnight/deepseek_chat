@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/message.dart';
-
 import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -26,12 +26,14 @@ class _ChatPageState extends State<ChatPage> {
     firstName: 'DeepSeek',
   );
 
-  List<ChatMessage> _messages = <ChatMessage>[];
-  List<Message> _messagesHistory = <Message>[];
+  final List<ChatMessage> _messages = <ChatMessage>[];
+  final List<Message> _messagesHistory = <Message>[
+    Message(
+      role: "system",
+      content: "Please respond in Spanish language only.",
+    ),
+  ];
   
-  // TODO: Add a list of messages to store the chat history
-  // TODO: Implement a model for the messages
-  // TODO: Implement a http client to request the chat response from the API
 
   @override
   Widget build(BuildContext context) {
@@ -53,10 +55,24 @@ class _ChatPageState extends State<ChatPage> {
       ),
       body: DashChat(
         currentUser: _currentUser, 
-        messageOptions: const MessageOptions(
+        messageOptions: MessageOptions(
           currentUserContainerColor: Colors.black,
           containerColor: Colors.lightBlue,
           textColor: Colors.white,
+          messageTextBuilder: (message, _, __) {
+            return message.user.id == _deepseekUser.id
+              ? MarkdownBody(
+                  data: message.text,
+                  styleSheet: MarkdownStyleSheet(
+                    p: const TextStyle(color: Colors.white),
+                    code: const TextStyle(
+                      backgroundColor: Colors.black45,
+                      color: Colors.white,
+                    ),
+                  ),
+                )
+              : Text(message.text, style: const TextStyle(color: Colors.white));
+          },
         ),
         onSend: (ChatMessage m){
           getChatResponse(m);
