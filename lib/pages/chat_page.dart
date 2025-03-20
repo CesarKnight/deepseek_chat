@@ -210,7 +210,8 @@ class _ChatPageState extends State<ChatPage> {
         });
         
         if (_ttsEnabled) {
-          await _flutterTts.speak(assistantMessage);
+            final plainTextMessage = assistantMessage.replaceAll(RegExp(r'[^\w\s]+'), '');
+            await _flutterTts.speak(plainTextMessage);
         }
       } else {
         print('Failed to get response: ${response.statusCode}');
