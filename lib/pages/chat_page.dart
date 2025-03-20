@@ -1,5 +1,6 @@
 import 'package:deepseek_chat/consts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:speech_to_text/speech_to_text.dart';
 import 'dart:convert';
@@ -31,16 +32,16 @@ class _ChatPageState extends State<ChatPage> {
     ),
   ];
 
+  // Controlador del campop de texto
   final TextEditingController _controller = TextEditingController();
 
+  // Instancia de la clase SpeechToText
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
 
-  @override
-  void initState() {
-    super.initState();
-    initSpeech();
-  }
+  // Instancia de la clase TextToSpeech
+  final FlutterTts _flutterTts = FlutterTts();
+   bool _ttsEnabled = false;  // Add this lin
 
   void initSpeech() async {
     _speechEnabled = await _speechToText.initialize();
@@ -80,6 +81,25 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  void initTTS() async {
+    await _flutterTts.setLanguage("es-US");
+    await _flutterTts.setPitch(0.95);
+    await _flutterTts.setSpeechRate(0.7);
+  }
+  
+  @override
+  void initState() {
+    super.initState();
+    initSpeech();
+    initTTS();
+  }
+
+  @override
+  void dispose() {
+    _flutterTts.stop();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +110,21 @@ class _ChatPageState extends State<ChatPage> {
         ),
         backgroundColor: Colors.lightBlue,
         actions: [
+          // Boton de Text a voz
+          IconButton(
+            icon: Icon(
+              _ttsEnabled ? Icons.volume_up : Icons.volume_off,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              setState(() {
+                _ttsEnabled = !_ttsEnabled;
+                if (!_ttsEnabled) {
+                  _flutterTts.stop();
+                }
+              });
+            },
+          ),
           IconButton(
             icon: Icon(
               _speechToText.isListening ? Icons.mic_off : Icons.mic,
@@ -173,6 +208,10 @@ class _ChatPageState extends State<ChatPage> {
             Message(role: "assistant", content: assistantMessage),
           );
         });
+        
+        if (_ttsEnabled) {
+          await _flutterTts.speak(assistantMessage);
+        }
       } else {
         print('Failed to get response: ${response.statusCode}');
         print('Response body: ${response.body}');
