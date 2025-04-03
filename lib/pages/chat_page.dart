@@ -176,25 +176,22 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> getChatResponse(ChatMessage m) async {
     setState(() {
       _messages.insert(0, m);
-      _messagesHistory.add(Message(role: "user", content: m.text));
     });
 
     try {
       final response = await http.post(
         Uri.parse(API_URL),
         headers: {
-          'Authorization': 'Bearer $OPENROUTER_API_KEY',
           'Content-Type': 'application/json',
         },
         body: jsonEncode({
-          'model': OPENROUTER_MODEL,
-          'messages': _messagesHistory.map((msg) => msg.toJson()).toList(),
+          'query': m.text,
         }),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
-        final assistantMessage = data['choices'][0]['message']['content'];
+        final assistantMessage = data['respuesta'];
 
         final botMessage = ChatMessage(
           user: _deepseekUser,
@@ -204,14 +201,11 @@ class _ChatPageState extends State<ChatPage> {
 
         setState(() {
           _messages.insert(0, botMessage);
-          _messagesHistory.add(
-            Message(role: "assistant", content: assistantMessage),
-          );
         });
         
         if (_ttsEnabled) {
-            final plainTextMessage = assistantMessage.replaceAll(RegExp(r'[^\w\s]+'), '');
-            await _flutterTts.speak(plainTextMessage);
+          final plainTextMessage = assistantMessage.replaceAll(RegExp(r'[^\w\s]+'), '');
+          await _flutterTts.speak(plainTextMessage);
         }
       } else {
         print('Failed to get response: ${response.statusCode}');
