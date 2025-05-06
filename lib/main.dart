@@ -1,23 +1,7 @@
-import 'package:deepseek_chat/pages/chat_page.dart';
 import 'package:flutter/material.dart';
+import 'main_development.dart' as development;
 
 void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
-      ),
-      home: ChatPage(),
-    );
-  }
+  // Launch development config by default
+  development.main();
 }
