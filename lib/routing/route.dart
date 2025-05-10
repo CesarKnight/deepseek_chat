@@ -1,4 +1,3 @@
-import 'package:deepseek_chat/presentation/views/chat_file_screen.dart';
 import 'package:deepseek_chat/presentation/views/chat_list_screen.dart';
 import 'package:deepseek_chat/presentation/viewModels/chat_list_viewmodel.dart';
 import 'package:deepseek_chat/presentation/viewModels/chat_viewmodel.dart';
@@ -79,29 +78,5 @@ GoRouter router() => GoRouter(
       },
     ),
     //chatFiles
-    GoRoute(
-  path: '${Routes.chatFiles}/:id',
-  name: 'chatFiles',
-  pageBuilder: (context, state) {
-    final chatId = state.pathParameters['id']!;
-    final chatViewModel = context.read<ChatViewModel>();
-
-    // Intentar obtener el título del chat si existe
-    String? chatTitle;
-    if (chatViewModel.currentChatId == chatId) {
-      // Si estamos en el mismo chat, podemos usar la información actual
-      chatTitle = "Chat actual"; // O algún otro título que tengas
-    }
-
-    return SlideTransitionPage(
-      slideFromRight: true,
-      routeName: 'chatFiles-$chatId',
-      child: ChatFilesScreen(
-        chatId: chatId,
-        chatTitle: chatTitle,
-      ),
-    );
-  },
-),
   ],
 );

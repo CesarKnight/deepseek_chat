@@ -1,7 +1,7 @@
 /// Constants used for API configuration
 class ApiConstants {
   // API endpoints
-  static const String API_URL = 'http://192.168.100.231:8000';
+  static const String API_URL = 'localhost:8000';
 
   // API keys
   static const String OPENROUTER_API_KEY = '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';

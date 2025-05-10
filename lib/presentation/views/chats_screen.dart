@@ -1,12 +1,8 @@
-import 'dart:io';
-
-import 'package:deepseek_chat/presentation/viewModels/media_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dash_chat_2/dash_chat_2.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:avatar_glow/avatar_glow.dart';
-import 'package:provider/provider.dart';
 import '../viewModels/chat_viewmodel.dart';
 import '../../../../routing/routes.dart';
 
@@ -101,7 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           icon: const Icon(Icons.camera_alt_outlined, size: 30),
                           onPressed: () async {
                             Navigator.pop(context);
-                            await _takePicture();
+                            
                           },
                         ),
                         const Text('Cámara'),
@@ -116,7 +112,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                           onPressed: () async {
                             Navigator.pop(context);
-                            await _recordVideo();
                           },
                         ),
                         const Text('Video'),
@@ -128,7 +123,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           icon: const Icon(Icons.photo_outlined, size: 30),
                           onPressed: () async {
                             Navigator.pop(context);
-                            await _pickImage();
                           },
                         ),
                         const Text('Galería'),
@@ -168,60 +162,6 @@ class _ChatScreenState extends State<ChatScreen> {
         );
       },
     );
-  }
-
-  Future<void> _takePicture() async {
-    final mediaViewModel = context.read<MediaViewModel>();
-    final File? photo = await mediaViewModel.takePhoto();
-
-    if (photo != null && widget.viewModel.currentChatId != null) {
-      try {
-        await mediaViewModel.saveMedia.execute(
-          widget.viewModel.currentChatId!,
-          photo,
-        );
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error al guardar la foto')),
-          );
-        }
-      }
-    }
-  }
-
-  Future<void> _recordVideo() async {
-    final mediaViewModel = context.read<MediaViewModel>();
-    final File? video = await mediaViewModel.recordVideo();
-    try {
-      await mediaViewModel.saveMedia.execute(
-        widget.viewModel.currentChatId!,
-        video!,
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al guardar el video')),
-        );
-      }
-    }
-  }
-
-  Future<void> _pickImage() async {
-    final mediaViewModel = context.read<MediaViewModel>();
-    final File? image = await mediaViewModel.pickImage();
-    try {
-      await mediaViewModel.saveMedia.execute(
-        widget.viewModel.currentChatId!,
-        image!,
-      );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error al guardar la imagen')),
-        );
-      }
-    }
   }
 
   // Mostrar modal de grabación de voz

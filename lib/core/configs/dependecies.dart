@@ -7,7 +7,6 @@ import 'package:deepseek_chat/domain/chat_repository_interface.dart';
 import 'package:deepseek_chat/domain/repositories/media_repository_interface.dart';
 import 'package:deepseek_chat/presentation/viewModels/chat_list_viewmodel.dart';
 import 'package:deepseek_chat/presentation/viewModels/chat_viewmodel.dart';
-import 'package:deepseek_chat/presentation/viewModels/media_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -27,12 +26,6 @@ List<SingleChildWidget> _sharedProviders = [
             ChatListViewModel(chatRepository: context.read<IChatRepository>()),
   ),
   Provider<IMediaRepository>(create: (context) => MediaRepository()),
-  ChangeNotifierProvider<MediaViewModel>(
-    lazy: true,
-    create:
-        (context) =>
-            MediaViewModel(mediaRepository: context.read<IMediaRepository>()),
-  ),
 ];
 
 /// Configure dependencies for development.
